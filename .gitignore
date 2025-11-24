@@ -17,3 +17,9 @@ screenshots/
 
 # Cache or trash
 .cache/
+configs/.vim/undo/
+configs/.vim/view/
+configs/.vim/swap/
+*.swp
+*.swo
+*.tmp
