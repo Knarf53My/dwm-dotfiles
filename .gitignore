@@ -1,0 +1,19 @@
+# editor junk
+*~
+*.swp
+*.swo
+
+# Suckless build outputs
+suckless/*/*.o
+suckless/*/*.tar.gz
+suckless/*/dwm
+suckless/*/st
+suckless/*/slstatus
+suckless/*/dmenu
+suckless/st/st.info
+
+# Screenshots
+screenshots/
+
+# Cache or trash
+.cache/
