@@ -45,13 +45,23 @@ link_file() {
     ln -s "$src" "$dest"
 }
 
-echo "==> Linking configuration files (adjust as needed)..."
+echo "==> Linking configuration files..."
 
-# Only link if you’ve already moved these into dotfiles
-link_file "$DOTFILES/.bashrc" "$HOME/.bashrc"
-link_file "$DOTFILES/.vimrc" "$HOME/.vimrc"
-link_file "$DOTFILES/x11/xinitrc" "$HOME/.xinitrc"
-link_file "$DOTFILES/x11/Xresources" "$HOME/.Xresources"
+# Bash config
+link_file "$DOTFILES/configs/.bashrc" "$HOME/.bashrc"
+
+# Vim config
+link_file "$DOTFILES/configs/.vimrc" "$HOME/.vimrc"
+
+# X init (used by startx)
+link_file "$DOTFILES/configs/.xinitrc" "$HOME/.xinitrc"
+
+# Xresources (only if you add one later; safe to leave here)
+link_file "$DOTFILES/configs/.Xresources" "$HOME/.Xresources"
+
+# dwm autostart script
+mkdir -p "$HOME/.config/dwm"
+link_file "$DOTFILES/configs/.config/dwm/autostart.sh" "$HOME/.config/dwm/autostart.sh"
 
 # -----------------------------------------------------------
 # 3. Ensure aliases auto-load
