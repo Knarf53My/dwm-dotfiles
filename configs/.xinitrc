@@ -1,5 +1,5 @@
 # autostart applications
-feh --bg-fill ~/dotfiles/wallpapers/debian.png &
+feh --bg-scale ~/dotfiles/wallpapers/debian.png &
 
 ~/.config/dwm/autostart.sh &
 
