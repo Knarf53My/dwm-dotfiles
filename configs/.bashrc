@@ -88,8 +88,8 @@ fi
 #export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
 # some more ls aliases
-alias ll='ls -al'
-alias l='eza -la --sort=type --group-directories-first'
+#alias ll='ls -al'
+#alias l='eza -la --sort=type --group-directories-first'
 #alias la='ls -A'
 #alias l='ls -CF'
 
@@ -98,9 +98,13 @@ alias l='eza -la --sort=type --group-directories-first'
 # ~/.bash_aliases, instead of adding them here directly.
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
 
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
+# Load custom aliases from ~/dotfiles/aliases
+if [ -d "$HOME/dotfiles/aliases" ]; then
+  for file in "$HOME/dotfiles/aliases/"*.sh; do
+    [ -r "$file" ] && . "$file"
+  done
 fi
+
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
