@@ -4,7 +4,7 @@
 #define THEME ACTIVE_THEME
 
 /* appearance */
-static char *font = "Iosevka Nerd Font:size=12";   /* unified with dwm */
+static char *font = "Iosevka Nerd Font:size=14";   /* unified with dwm */
 static int borderpx = 2;
 
 /* shell and behavior */
