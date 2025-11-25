@@ -92,7 +92,7 @@ sudo apt install -y \
     libx11-dev libxft-dev libxinerama-dev \
     libfreetype6-dev libfontconfig1-dev \
     maim xclip feh \
-    ranger vim git \
+    ranger vim git htop bmon\
     pkg-config
 
 echo "==> Installing terminfo support..."
