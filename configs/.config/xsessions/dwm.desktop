@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=DWM
-Comment=Dynamic Window Manager
-Exec=/usr/local/bin/dwm
+Comment=Dynamic Window Manager (via .xinitrc)
+Exec=sh -c "exec $HOME/.xinitrc"
 Type=Application
