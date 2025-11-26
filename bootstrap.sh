@@ -3,8 +3,17 @@ set -e
 
 DOTFILES="$HOME/dotfiles"
 SUCKLESS="$DOTFILES/suckless"
+UPDATE_MODE=0
 
 echo "==> Bootstrapping dotfiles setup..."
+
+# -----------------------------------------------------------
+# 0. Check for update flag
+# -----------------------------------------------------------
+if [[ "$1" == "--update" ]]; then
+    echo "==> Running in UPDATE mode (skipping package installation)..."
+    UPDATE_MODE=1
+fi
 
 # -----------------------------------------------------------
 # 1. Create base directories
@@ -14,11 +23,11 @@ echo "==> Creating base directories..."
 mkdir -p "$HOME/.config"
 mkdir -p "$DOTFILES/aliases"
 mkdir -p "$SUCKLESS/dwm"
-mkdir -p "$SUCKLESS/st"
 mkdir -p "$SUCKLESS/slstatus"
 mkdir -p "$DOTFILES/scripts"
 mkdir -p "$DOTFILES/themes"
 mkdir -p "$DOTFILES/wallpapers"
+mkdir -p "$DOTFILES/screenshots" # Ensure screenshots dir exists for maim
 
 # -----------------------------------------------------------
 # 2. Helper: safe symlink
@@ -45,7 +54,7 @@ link_file() {
     ln -s "$src" "$dest"
 }
 
-echo "==> Linking configuration files... (etc)"
+echo "==> Linking configuration files..."
 
 # Bash config
 link_file "$DOTFILES/configs/.bashrc" "$HOME/.bashrc"
@@ -53,41 +62,38 @@ link_file "$DOTFILES/configs/.bashrc" "$HOME/.bashrc"
 # Vim config
 link_file "$DOTFILES/configs/.vimrc" "$HOME/.vimrc"
 
-# DWM config (autostart)
-link_file "$DOTFILES/configs/.config/dwm/autostart.sh" "$HOME/.config/dwm/autostart.sh"
-
-# Alacritty config
-# Assuming you have a config file for alacritty
-# link_file "$DOTFILES/configs/.config/alacritty/alacritty.toml" "$HOME/.config/alacritty/alacritty.toml"
-
-# Xorg config
+# X init (used by startx)
 link_file "$DOTFILES/configs/.xinitrc" "$HOME/.xinitrc"
 
+# Xresources
+link_file "$DOTFILES/configs/.Xresources" "$HOME/.Xresources"
+
+# dwm autostart script
+mkdir -p "$HOME/.config/dwm"
+link_file "$DOTFILES/configs/.config/dwm/autostart.sh" "$HOME/.config/dwm/autostart.sh"
 
 # -----------------------------------------------------------
-# 3. Check for .bashrc execution in .profile
+# 3. Ensure aliases auto-load
 # -----------------------------------------------------------
 
-# Ensures .bashrc is sourced correctly in login shells,
-# particularly for non-interactive logins used by some environments.
-if [ -f "$HOME/.profile" ]; then
-    if ! grep -q "\.bashrc" "$HOME/.profile"; then
-        echo "==> Appending .bashrc sourcing to ~/.profile"
-        echo -e "\n# Source .bashrc if it exists\nif [ -f \"\$HOME/.bashrc\" ]; then\n    . \"\$HOME/.bashrc\"\nfi" >> "$HOME/.profile"
-    else
-        echo "-> .bashrc sourcing already present in ~/.profile"
-    fi
-else
-    echo "!! No ~/.profile found, you may want to link or create one."
+echo "==> Ensuring .bashrc loads modular aliases..."
+
+ALIASES_BLOCK_MARKER="# Load modular aliases from ~/dotfiles (AUTO-INSERTED)"
+ALIASES_BLOCK='
+# Load modular aliases from ~/dotfiles (AUTO-INSERTED)
+if [ -d "$HOME/dotfiles/aliases" ]; then
+  for f in "$HOME/dotfiles/aliases/"*.sh; do
+    [ -f "$f" ] && . "$f"
+  done
 fi
+'
 
-# Ensures the .xinitrc is called correctly by startx
 if [ -f "$HOME/.bashrc" ]; then
-    if ! grep -q "startx" "$HOME/.bashrc"; then
-        echo "==> Adding startx check to ~/.bashrc for TTY login"
-        echo -e "\n# Start X on login if applicable\nif [ \"\$(tty)\" = \"/dev/tty1\" ]; then\n    startx\nfi" >> "$HOME/.bashrc"
+    if ! grep -q "$ALIASES_BLOCK_MARKER" "$HOME/.bashrc"; then
+        printf "\n%s\n" "$ALIASES_BLOCK" >> "$HOME/.bashrc"
+        echo "-> Added alias loader to ~/.bashrc"
     else
-        echo "-> startx check already present in ~/.bashrc"
+        echo "-> Alias loader already present in ~/.bashrc"
     fi
 else
     echo "!! No ~/.bashrc found, you may want to link or create one."
@@ -97,21 +103,23 @@ fi
 # 4. Install essential packages (Debian-based)
 # -----------------------------------------------------------
 
-echo "==> Installing required packages (Debian)..."
+if [ "$UPDATE_MODE" -eq 0 ]; then
+    echo "==> Installing required packages (Debian)..."
 
-sudo apt update
-sudo apt install -y \
-    build-essential \
-    libx11-dev libxft-dev libxinerama-dev \
-    libfreetype6-dev libfontconfig1-dev \
-    maim xclip feh \
-    pkg-config \
-    xorg xinit x11-xserver-utils \
-    alacritty \
-    firefox-esr  /* Browser installed from Debian repository */
+    sudo apt update
+    
+    # 4a. Build essentials and X libs
+    sudo apt install -y build-essential libx11-dev libxft-dev libxinerama-dev libfreetype6-dev libfontconfig1-dev pkg-config
+    
+    # 4b. Utilities and applications (Firefox-esr included)
+    sudo apt install -y maim xclip feh alacritty firefox-esr
+    
+    # 4c. X system and terminfo
+    sudo apt install -y xorg xinit x11-xserver-utils ncurses-base ncurses-term
 
-echo "==> Installing terminfo support... (ncurses)"
-sudo apt install -y ncurses-base ncurses-term
+else
+    echo "==> Skipping package installation in update mode."
+fi
 
 # -----------------------------------------------------------
 # 5. Initial suckless build (if sources exist)
@@ -126,15 +134,17 @@ build_suckless() {
     if [ -d "$path" ]; then
         if [ -f "$path/Makefile" ]; then
             echo "--> Building $name in $path"
+            # Use 'make clean install' for full rebuild/install cycle
             (cd "$path" && sudo make clean install)
         else
-            echo "!! $name: no Makefile found in $path, skipping"
+            echo "!! $name: directory exists ($path), but no Makefile found. Did you clone the source code into this directory?"
         fi
     else
-        echo "!! $name: directory $path does not exist, skipping"
-    fi
+        echo "!! $name: source directory $path does not exist, skipping build."
+    }
 }
 build_suckless "dwm"      "$SUCKLESS/dwm"
 build_suckless "slstatus" "$SUCKLESS/slstatus"
 
-echo "==> Bootstrap complete! You should now be able to run DWM."
+echo "==> Bootstrap complete!"
+echo "You may want to: source ~/.bashrc  or  log out/in."
