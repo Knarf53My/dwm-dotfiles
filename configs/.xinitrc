@@ -7,7 +7,7 @@ xrdb -merge $HOME/.Xresources
 # Execute the conditional xrandr logic from autostart.sh.
 # This MUST run BEFORE feh to ensure the correct resolution is set.
 "$HOME/.config/dwm/autostart.sh" &
-sleep 1 # Wait 1 second for Xorg/xrandr to finalize the new screen geometry.
+sleep 1.0
 
 # 3. Start all background services (MUST use '&')
 # These processes run alongside DWM and keep the session active.
@@ -22,9 +22,7 @@ slstatus &
 
 # Tag 2 terminal
 alacritty --class Alacritty,t2 &
-
-# Tag 3 - Firefox ESR
-firefox-esr &
+sleep 1.0
 
 # Tag 6 — three monitoring terminals
 alacritty --class Alacritty,t6a &
