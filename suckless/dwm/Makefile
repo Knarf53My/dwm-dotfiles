@@ -3,43 +3,32 @@
 
 include config.mk
 
-SRC = drw.c dwm.c util.c
-OBJ = ${SRC:.c=.o}
+.PHONY: all clean dist install uninstall
 
 all: dwm
 
-.c.o:
-	${CC} -c ${CFLAGS} $<
-
-${OBJ}: config.h config.mk
-
-config.h:
-	cp config.def.h $@
-
-dwm: ${OBJ}
-	${CC} -o $@ ${OBJ} ${LDFLAGS}
+dwm: $(OBJ)
+	$(CC) -o $@ $(OBJ) $(LDFLAGS)
 
 clean:
-	rm -f dwm ${OBJ} dwm-${VERSION}.tar.gz
+	rm -f dwm $(OBJ) $(OBJ:.o=.d) dwm.c.orig config.h.orig
 
 dist: clean
-	mkdir -p dwm-${VERSION}
-	cp -R LICENSE Makefile README config.def.h config.mk\
-		dwm.1 drw.h util.h ${SRC} dwm.png transient.c dwm-${VERSION}
-	tar -cf dwm-${VERSION}.tar dwm-${VERSION}
-	gzip dwm-${VERSION}.tar
-	rm -rf dwm-${VERSION}
+	rm -f dwm-$(VERSION).tar.gz
+	mkdir -p dwm-$(VERSION)
+	cp -R Makefile config.mk config.def.h LICENSE README dwm.c drw.c drw.h util.c util.h transient.c dwm.1 dwm-$(VERSION)
+	tar -cf dwm-$(VERSION).tar dwm-$(VERSION)
+	gzip dwm-$(VERSION).tar
+	rm -rf dwm-$(VERSION)
 
 install: all
-	mkdir -p ${DESTDIR}${PREFIX}/bin
-	cp -f dwm ${DESTDIR}${PREFIX}/bin
-	chmod 755 ${DESTDIR}${PREFIX}/bin/dwm
-	mkdir -p ${DESTDIR}${MANPREFIX}/man1
-	sed "s/VERSION/${VERSION}/g" < dwm.1 > ${DESTDIR}${MANPREFIX}/man1/dwm.1
-	chmod 644 ${DESTDIR}${MANPREFIX}/man1/dwm.1
+	mkdir -p $(DESTDIR)$(PREFIX)/bin
+	cp -f dwm $(DESTDIR)$(PREFIX)/bin
+	chmod 755 $(DESTDIR)$(PREFIX)/bin/dwm
+	mkdir -p $(DESTDIR)$(MANPREFIX)/man1
+	sed "s/VERSION/$(VERSION)/g" < dwm.1 > $(DESTDIR)$(MANPREFIX)/man1/dwm.1
+	chmod 644 $(DESTDIR)$(MANPREFIX)/man1/dwm.1
 
 uninstall:
-	rm -f ${DESTDIR}${PREFIX}/bin/dwm\
-		${DESTDIR}${MANPREFIX}/man1/dwm.1
-
-.PHONY: all clean dist install uninstall
+	rm -f $(DESTDIR)$(PREFIX)/bin/dwm\
+		$(DESTDIR)$(MANPREFIX)/man1/dwm.1
