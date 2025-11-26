@@ -2,5 +2,5 @@
 Encoding=UTF-8
 Name=DWM
 Comment=Dynamic Window Manager (Dedicated Session Script)
-Exec=/home/frank/dotfiles/configs/.config/dwm/dwm-session.sh
+Exec=/home/frank/dotfiles/configs/.config/dwm/dwm-sessions.sh
 Type=Application
