@@ -13,26 +13,41 @@ echo "3) all"
 printf "Enter number (1-3): "
 read choice
 
+# Function to build a component without using a subshell for 'cd'
 build() {
-    name="$1"
-    path="$2"
+    local name="$1"
+    local path="$2"
     echo "[Rebuilding $name]..."
     
-    # Use 'cd' in a subshell and check its exit status
-    if (cd "$path" 2>/dev/null); then
-        echo "Successfully navigated to $path. Starting build..."
-        make clean && make && sudo make install
-        
-        # Check if 'make install' was successful
-        if [ $? -eq 0 ]; then
-            echo "[$name done: SUCCESSFULLY INSTALLED]"
-        else
-            echo "[$name ERROR: Installation failed. Check 'make' output for details.]"
-        fi
-    else
+    # 1. Safely change directory
+    echo "Attempting to navigate to $path..."
+    if ! cd "$path" 2>/dev/null; then
         echo "[$name ERROR: Cannot change directory to $path.]"
         echo "Please ensure the path is correct and the directory exists."
-        exit 1
+        return 1
+    fi
+
+    # 2. Check if Makefile exists before proceeding
+    if [ ! -f "Makefile" ]; then
+        echo "[$name ERROR: Makefile not found in $path. Aborting build.]"
+        cd - >/dev/null # Go back
+        return 1
+    fi
+    
+    echo "Starting build sequence: make clean, make, sudo make install..."
+
+    # 3. Execute the full build chain
+    make clean && make && sudo make install
+    BUILD_EXIT_CODE=$?
+    
+    # 4. Change back to the starting directory
+    cd - >/dev/null
+
+    # 5. Report result
+    if [ $BUILD_EXIT_CODE -eq 0 ]; then
+        echo "[$name done: SUCCESSFULLY INSTALLED]"
+    else
+        echo "[$name ERROR: Installation failed (Exit Code: $BUILD_EXIT_CODE). Check 'make' output for details.]"
     fi
 }
 
@@ -45,12 +60,13 @@ case "$choice" in
         ;;
     3)
         # Rebuilding all components.
-        build "slstatus" "$SLSTATUS_PATH"
         build "dwm" "$DWM_PATH"
+        if [ $? -eq 0 ]; then
+            build "slstatus" "$SLSTATUS_PATH"
+        fi
         ;;
     *)
-        echo "Invalid choice. Please enter a number between 1 and 3."
+        echo "Invalid choice. Please enter 1, 2, or 3."
         exit 1
         ;;
 esac
-

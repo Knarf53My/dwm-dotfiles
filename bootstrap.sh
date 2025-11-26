@@ -106,6 +106,7 @@ sudo apt install -y \
 
 sudo apt install -y alacritty
 sudo apt install -y xorg xinit x11-xserver-utils
+sudo apt install dmenu
 
 echo "==> Installing terminfo support..."
 sudo apt install -y ncurses-base ncurses-term
