@@ -27,7 +27,7 @@ static const char col_accent[]    = COL_ACCENT;
 static const char col_accent_alt[]= COL_ACCENT_ALT;
 
 static const char *colors[][3] = {
-	/*              fg          bg          border */
+	/* fg          bg          border */
 	[SchemeNorm] = { col_fg_dim, col_bg,    col_border },
 	[SchemeSel]  = { col_fg,     col_accent, col_accent },
 };
@@ -37,14 +37,18 @@ static const char *tags[] = { "1", "2", "3", "4", "5", "6" };
 
 static const Rule rules[] = {
     /* class        instance  title   tags mask  isfloating  monitor */
-    { "Alacritty",  "t1",     NULL,   1 << 0,    0,          -1 }, /* tag 1 terminal */
-    { "Alacritty",  "t3a",    NULL,   1 << 2,    0,          -1 }, /* tag 3 terminal 1 */
-    { "Alacritty",  "t3b",    NULL,   1 << 2,    0,          -1 }, /* tag 3 terminal 2 */
-    { "Alacritty",  "t3c",    NULL,   1 << 2,    0,          -1 }, /* tag 3 terminal 3 */
+    /* Tag 2: Primary terminal (1 << 1) */
+    { "Alacritty",  "t2",     NULL,   1 << 1,    0,          -1 }, 
+    
+    /* Tag 3: Browser (1 << 2) */
+    { "Firefox",    NULL,     NULL,   1 << 2,    0,          -1 }, 
+    
+    /* Tag 6: Monitoring Terminals (1 << 5) */
+    { "Alacritty",  "t6a",    NULL,   1 << 5,    0,          -1 }, 
+    { "Alacritty",  "t6b",    NULL,   1 << 5,    0,          -1 }, 
+    { "Alacritty",  "t6c",    NULL,   1 << 5,    0,          -1 }, 
 
-    { "firefox-esr",   NULL,  NULL,   1 << 1,    0,          -1 }, /* tag 2 firefox */
-    { "Google-chrome", NULL,  NULL,   1 << 3,    0,          -1 }, /* tag 4 chrome */
-
+    /* Generic rules */
     { "Alacritty",  NULL,     NULL,   0,         0,          -1 }, /* any other alacritty */
 };
 
@@ -83,6 +87,7 @@ static const char *dmenucmd[] = {
 };
 
 static const char *termcmd[]  = { "alacritty", NULL };
+static const char *browsercmd[] = { "firefox-esr", NULL }; // Updated to firefox-esr
 
 /* volume commands */
 static const char *volupcmd[]   = { "pamixer", "--increase", "2", NULL };
@@ -97,6 +102,10 @@ static const Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
+	
+	/* Keybindings for dedicated application launchers */
+	{ MODKEY,                       XK_w,      spawn,          {.v = browsercmd } }, /* Super + w: Launch Web Browser (firefox-esr) */
+    
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
@@ -166,4 +175,3 @@ static const Button buttons[] = {
 	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
 };
-

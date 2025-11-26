@@ -3,40 +3,36 @@
 # 1. Initialize X Resources (colors, fonts, X-based settings)
 xrdb -merge $HOME/.Xresources
 
-# 2. Start all background services (MUST use '&')
+# 2. CRITICAL FIX: SET RESOLUTION AND THEN PAUSE
+# Execute the conditional xrandr logic from autostart.sh.
+# This MUST run BEFORE feh to ensure the correct resolution is set.
+"$HOME/.config/dwm/autostart.sh" &
+sleep 1 # Wait 1 second for Xorg/xrandr to finalize the new screen geometry.
+
+# 3. Start all background services (MUST use '&')
 # These processes run alongside DWM and keep the session active.
 
-# DWM Autostart Script: For other background apps
-# This usually runs things like nm-applet, polkit, compositor, etc.
-"$HOME/.config/dwm/autostart.sh" &
-
-sleep 1
-
-# Wallpaper (FEH): Using --bg-scale and robust path ($HOME)
-feh --bg-scale --scale-down --no-xinerama "$HOME/dotfiles/wallpapers/73.png" &
+# Wallpaper (FEH): Now runs AFTER xrandr has set the correct resolution.
+feh --bg-scale --scale-down --no-xinerama "$HOME/dotfiles/wallpapers/debian.png" &
 
 # Status Bar: slstatus
 slstatus &
 
-# Optional: Autoconnect Bluetooth speaker
-# (
-#     sleep 2
-#     bluetoothctl power on
-#     bluetoothctl connect 99:D5:BC:1A:C0:95
-# ) &
+# 4. AUTO-STARTED TERMINALS AND APPLICATIONS (MUST use '&')
 
-# 3. AUTO-STARTED TERMINALS (MUST use '&')
+# Tag 2 terminal
+alacritty --class Alacritty,t2 &
 
-# Tag 1 terminal
-alacritty --class Alacritty,t1 &
+# Tag 3 - Firefox ESR
+firefox-esr &
 
-# Tag 3 — three terminals (Use sleep to help DWM place them correctly)
-alacritty --class Alacritty,t3a &
+# Tag 6 — three monitoring terminals
+alacritty --class Alacritty,t6a &
 sleep 0.8
-alacritty --class Alacritty,t3b &
+alacritty --class Alacritty,t6b &
 sleep 0.8
-alacritty --class Alacritty,t3c &
+alacritty --class Alacritty,t6c &
 
-# 4. EXECUTE WINDOW MANAGER (MUST be the final line and NOT use '&')
-# The X session will end when DWM exits.
+# 5. EXECUTE WINDOW MANAGER (MUST be the final line and NOT use '&')
+# DWM is configured to view Tag 1 (the empty wallpaper) first by default.
 exec dwm

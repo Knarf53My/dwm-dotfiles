@@ -45,7 +45,7 @@ link_file() {
     ln -s "$src" "$dest"
 }
 
-echo "==> Linking configuration files..."
+echo "==> Linking configuration files... (etc)"
 
 # Bash config
 link_file "$DOTFILES/configs/.bashrc" "$HOME/.bashrc"
@@ -53,38 +53,41 @@ link_file "$DOTFILES/configs/.bashrc" "$HOME/.bashrc"
 # Vim config
 link_file "$DOTFILES/configs/.vimrc" "$HOME/.vimrc"
 
-# X init (used by startx)
-link_file "$DOTFILES/configs/.xinitrc" "$HOME/.xinitrc"
-
-# Xresources (only if you add one later; safe to leave here)
-link_file "$DOTFILES/configs/.Xresources" "$HOME/.Xresources"
-
-# dwm autostart script
-mkdir -p "$HOME/.config/dwm"
+# DWM config (autostart)
 link_file "$DOTFILES/configs/.config/dwm/autostart.sh" "$HOME/.config/dwm/autostart.sh"
 
+# Alacritty config
+# Assuming you have a config file for alacritty
+# link_file "$DOTFILES/configs/.config/alacritty/alacritty.toml" "$HOME/.config/alacritty/alacritty.toml"
+
+# Xorg config
+link_file "$DOTFILES/configs/.xinitrc" "$HOME/.xinitrc"
+
+
 # -----------------------------------------------------------
-# 3. Ensure aliases auto-load
+# 3. Check for .bashrc execution in .profile
 # -----------------------------------------------------------
 
-echo "==> Ensuring .bashrc loads modular aliases..."
-
-ALIASES_BLOCK_MARKER="# Load modular aliases from ~/dotfiles (AUTO-INSERTED)"
-ALIASES_BLOCK='
-# Load modular aliases from ~/dotfiles (AUTO-INSERTED)
-if [ -d "$HOME/dotfiles/aliases" ]; then
-  for f in "$HOME/dotfiles/aliases/"*.sh; do
-    [ -f "$f" ] && . "$f"
-  done
-fi
-'
-
-if [ -f "$HOME/.bashrc" ]; then
-    if ! grep -q "$ALIASES_BLOCK_MARKER" "$HOME/.bashrc"; then
-        printf "\n%s\n" "$ALIASES_BLOCK" >> "$HOME/.bashrc"
-        echo "-> Added alias loader to ~/.bashrc"
+# Ensures .bashrc is sourced correctly in login shells,
+# particularly for non-interactive logins used by some environments.
+if [ -f "$HOME/.profile" ]; then
+    if ! grep -q "\.bashrc" "$HOME/.profile"; then
+        echo "==> Appending .bashrc sourcing to ~/.profile"
+        echo -e "\n# Source .bashrc if it exists\nif [ -f \"\$HOME/.bashrc\" ]; then\n    . \"\$HOME/.bashrc\"\nfi" >> "$HOME/.profile"
     else
-        echo "-> Alias loader already present in ~/.bashrc"
+        echo "-> .bashrc sourcing already present in ~/.profile"
+    fi
+else
+    echo "!! No ~/.profile found, you may want to link or create one."
+fi
+
+# Ensures the .xinitrc is called correctly by startx
+if [ -f "$HOME/.bashrc" ]; then
+    if ! grep -q "startx" "$HOME/.bashrc"; then
+        echo "==> Adding startx check to ~/.bashrc for TTY login"
+        echo -e "\n# Start X on login if applicable\nif [ \"\$(tty)\" = \"/dev/tty1\" ]; then\n    startx\nfi" >> "$HOME/.bashrc"
+    else
+        echo "-> startx check already present in ~/.bashrc"
     fi
 else
     echo "!! No ~/.bashrc found, you may want to link or create one."
@@ -102,13 +105,12 @@ sudo apt install -y \
     libx11-dev libxft-dev libxinerama-dev \
     libfreetype6-dev libfontconfig1-dev \
     maim xclip feh \
-    pkg-config
+    pkg-config \
+    xorg xinit x11-xserver-utils \
+    alacritty \
+    firefox-esr  /* Browser installed from Debian repository */
 
-sudo apt install -y alacritty
-sudo apt install -y xorg xinit x11-xserver-utils
-sudo apt install dmenu
-
-echo "==> Installing terminfo support..."
+echo "==> Installing terminfo support... (ncurses)"
 sudo apt install -y ncurses-base ncurses-term
 
 # -----------------------------------------------------------
@@ -135,7 +137,4 @@ build_suckless() {
 build_suckless "dwm"      "$SUCKLESS/dwm"
 build_suckless "slstatus" "$SUCKLESS/slstatus"
 
-echo "==> Bootstrap complete!"
-echo "You may want to: source ~/.bashrc  or  log out/in."
-
-
+echo "==> Bootstrap complete! You should now be able to run DWM."
