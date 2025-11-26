@@ -40,9 +40,6 @@ static const Rule rules[] = {
     /* Tag 2: Primary terminal (1 << 1) */
     { "Alacritty",  "t2",     NULL,   1 << 1,    0,          -1 }, 
     
-    /* Tag 3: Browser (1 << 2) */
-    { "Firefox",    NULL,     NULL,   1 << 2,    0,          -1 }, 
-    
     /* Tag 6: Monitoring Terminals (1 << 5) */
     { "Alacritty",  "t6a",    NULL,   1 << 5,    0,          -1 }, 
     { "Alacritty",  "t6b",    NULL,   1 << 5,    0,          -1 }, 

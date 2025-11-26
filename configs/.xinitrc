@@ -13,7 +13,7 @@ sleep 1.0
 # These processes run alongside DWM and keep the session active.
 
 # Wallpaper (FEH): Now runs AFTER xrandr has set the correct resolution.
-feh --bg-scale --scale-down --no-xinerama "$HOME/dotfiles/wallpapers/debian.png" &
+feh --bg-scale --scale-down --no-xinerama "$HOME/dotfiles/wallpapers/73.png" &
 
 # Status Bar: slstatus
 slstatus &
