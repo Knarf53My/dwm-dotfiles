@@ -23,3 +23,11 @@ configs/.vim/swap/
 *.swo
 *.tmp
 configs/.vim/undo/
+
+# Ignore files generated during runtime or installation.
+
+# Vim-Plug plugin directory
+.vim/plugged/
+
+# Also ignore common temporary files
+*.bak
