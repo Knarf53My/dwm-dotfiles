@@ -1,3 +1,9 @@
+#!/bin/bash
+
+# --- VARIABLES ---
+BASHRC_PATH="$HOME/.bashrc"
+BACKUP_PATH="$HOME/.bashrc.backup_$(date +%Y%m%d%H%M%S)"
+NEW_BASHRC_CONTENT=$(cat << 'EOF_BASHRC'
 
 # -----------------------------------------------
 # CUSTOM BASHRC: Minimalist and Aesthetic
@@ -86,4 +92,40 @@ if ! shopt -oq posix; then
   elif [ -f /etc/bash_completion ]; then
     . /etc/bash_completion
   fi
+fi
+
+EOF_BASHRC
+)
+
+echo "--- Bashrc Customization Script ---"
+echo "This script will replace your existing $BASHRC_PATH with a new, colorful configuration."
+echo "Your original file will be backed up to: $BACKUP_PATH"
+echo ""
+
+read -r -p "Do you wish to proceed? (y/N): " response
+
+if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]
+then
+    # 1. Back up the existing file
+    echo "Backing up existing $BASHRC_PATH to $BACKUP_PATH..."
+    cp "$BASHRC_PATH" "$BACKUP_PATH"
+
+    # 2. Write the new content
+    echo "Creating new colorful .bashrc..."
+    echo "$NEW_BASHRC_CONTENT" > "$BASHRC_PATH"
+
+    echo ""
+    echo "✅ Success! A new, colorful .bashrc has been created."
+    echo "To activate it in your current terminal, run: source $BASHRC_PATH"
+    echo ""
+
+    read -r -p "Would you like to load the new settings immediately? (y/N): " load_response
+    if [[ "$load_response" =~ ^([yY][eE][sS]|[yY])$ ]]
+    then
+        source "$BASHRC_PATH"
+        echo "Settings loaded. You should see the new prompt now."
+    fi
+
+else
+    echo "Operation cancelled. No changes were made to $BASHRC_PATH."
 fi
