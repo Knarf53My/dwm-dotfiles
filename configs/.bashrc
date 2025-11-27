@@ -87,3 +87,14 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
+
+# --- FZF (Fuzzy Finder) Configuration ---
+# Source the FZF key bindings and completion scripts for interactive search.
+if [ -f /usr/share/bash-completion/completions/fzf ]; then
+    . /usr/share/bash-completion/completions/fzf
+fi
+# Alternative location check (less common, but safe)
+if [ -f /usr/share/doc/fzf/examples/key-bindings.bash ]; then
+    . /usr/share/doc/fzf/examples/key-bindings.bash
+fi
+
