@@ -1,51 +1,18 @@
-" --- Minimal and Colorful .vimrc ---
-" This file sets up basic features and loads a clean theme.
+" --- Minimal, Native .vimrc ---
+" Sets up basic features and native color. No external plugins are used.
 
-" --- Minimal and Colorful .vimrc for Dotfiles Repo ---
-" This file sets up basic features and essential plugins.
-" Users can uncomment their preferred theme below.
+set nocompatible              " Be iMproved
 
-" 1. Required settings for plugins/colors
-set nocompatible              " Be iMproved, required for plugins
-filetype off                  " Required for Vim-Plug
-
-" 2. Enable syntax highlighting and colors
+" 1. Enable Syntax Highlighting and 256 Colors
 syntax on
-set background=dark           " Tell Vim our terminal background is dark
+set background=dark           " Assume a dark terminal background
 set t_Co=256                  " Enable 256 colors
 
-" 3. Basic functionality and aesthetics
+" 2. Basic Functionality and Aesthetics
 set encoding=utf-8            " Use UTF-8 encoding
 set number                    " Show line numbers
-set cursorline                " Highlight the current line
 set autoindent                " Auto-indent
 set smarttab                  " Smart tabs
 
-" 4. Plugin Manager Setup (Vim-Plug)
-call plug#begin('~/.vim/plugged')
-
-" --- ESSENTIAL PLUGINS ---
-" 1. File Explorer: NERDTree (A tree explorer for file navigation)
-Plug 'preservim/nerdtree'
-
-" 2. Syntax Highlighting Enhancement: vim-polyglot (Comprehensive syntax highlighting for many languages)
-Plug 'sheerun/vim-polyglot'
-
-" --- THEME PLUGINS (Choose One by Uncommenting) ---
-" Plug 'dracula/vim'           " Option 1: Dracula Theme
-Plug 'arcticicestudio/nord-vim' " Option 2: Nord Theme (icy, cool color palette)
-" Plug 'morhetz/gruvbox'       " Option 3: Gruvbox Theme (warm, retro-inspired color palette)
-
-" --- END PLUGINS ---
-call plug#end()
-
-" 5. Plugin Specific Configuration
-" Uncomment one color scheme below after running :PlugInstall
-" colorscheme dracula         " Activate Dracula (if uncommented above)
-colorscheme nord            " Activate Nord (if uncommented above)
-" colorscheme gruvbox         " Activate Gruvbox (if uncommented above)
-
-" NERDTree mappings (opens/closes with Ctrl+n, opens on startup if no file specified)
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-nnoremap <C-n> :NERDTreeToggle<CR>
+" Optional: Use a simple native colorscheme if you want more than black/white
+" colorscheme desert
