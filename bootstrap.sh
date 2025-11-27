@@ -32,10 +32,9 @@ mkdir -p "$DOTFILES/wallpapers"
 mkdir -p "$DOTFILES/screenshots"
 mkdir -p "$DOTFILES/configs/.config/xsessions"
 
-
 # -----------------------------------------------------------
 # 3. Install essential packages (Debian-based)
-# -----------------------------------------------------------\
+# -----------------------------------------------------------
 
 if [ "$UPDATE_MODE" -eq 0 ]; then
     echo "==> Installing required packages (Debian)..."
@@ -44,12 +43,12 @@ if [ "$UPDATE_MODE" -eq 0 ]; then
     
     # CRITICAL: Build essentials and all X libs (Fixes DWM crashing)
     # Packages consolidated for robust installation.
-    sudo apt install -y build-essential libx11-dev libxft-dev libxinerama-dev libfreetype6-dev libfontconfig1-dev pkg-config maim xclip feh alacritty firefox-esr lightdm lightdm-gtk-greeter xorg xinit x11-xserver-utils ncurses-base ncurses-term
+    sudo apt install -y build-essential libx11-dev libxft-dev libxinerama-dev libfreetype6-dev libfontconfig1-dev pkg-config maim xclip feh alacritty firefox-esr lightdm lightdm-gtk-greeter xorg xinit x11-xserver-utils ncurses-base ncurses-term vim
+    #                                                                                                                                                                                                                                           ^^^^^ ADDED VIM HERE
 
 else
     echo "==> Skipping package installation in update mode."
 fi
-
 # -----------------------------------------------------------
 # 4. Initial suckless build (if sources exist)
 # -----------------------------------------------------------
@@ -79,13 +78,14 @@ build_suckless "slstatus" "$SUCKLESS/slstatus"
 # -----------------------------------------------------------
 echo "==> Creating essential configuration symlinks..."
 
-# Helper: safe symlink function
+# Helper: safe symlink function (same as before)
 safe_symlink() {
     local src="$1"
     local dest="$2"
 
     if [ -e "$dest" ] && ! [ -L "$dest" ]; then
         echo "--> Backing up existing $dest to ${dest}.bak"
+        # The mv command now moves /home/frank/.config to /home/frank/.config.bak
         mv "$dest" "${dest}.bak"
     fi
 
@@ -97,15 +97,14 @@ safe_symlink() {
     fi
 }
 
-# --- A. Link Core Hidden Files ---
+# --- A. Link Core Hidden Files (OK as they are files) ---
 safe_symlink "$DOTFILES/configs/.bashrc" "$HOME/.bashrc"
 safe_symlink "$DOTFILES/configs/.vimrc" "$HOME/.vimrc"
 safe_symlink "$DOTFILES/configs/.xinitrc" "$HOME/.xinitrc"
 
-# --- B. Link .config Directory ---
-# This links the entire internal .config folder to $HOME/.config
-# Note: This assumes you handle conflicts within $DOTFILES/configs/.config
-safe_symlink "$DOTFILES/configs/.config/" "$HOME/.config/"
+# --- B. Link .config Directory (CORRECTED CALL) ---
+# NOTE: Omitted trailing slash on destination ($HOME/.config) for safe backup.
+safe_symlink "$DOTFILES/configs/.config" "$HOME/.config"
 
 # -----------------------------------------------------------
 # 6. Enable and Start LightDM Service (Guarantee)
