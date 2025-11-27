@@ -97,5 +97,12 @@ if [ "$UPDATE_MODE" -eq 0 ]; then
     echo "-> DWM session file copied to /usr/share/xsessions/dwm.desktop"
 fi
 
-echo "==> Bootstrap complete!"
-echo "You may want to: source ~/.bashrc  or  log out/in."
+# -----------------------------------------------------------
+# 6. Enable and Start LightDM Service (Guarantee)
+# -----------------------------------------------------------
+echo "==> Enabling and starting LightDM service..."
+sudo systemctl enable lightdm
+sudo systemctl start lightdm
+
+
+echo "==> Bootstrap complete! Rebooting is recommended."
