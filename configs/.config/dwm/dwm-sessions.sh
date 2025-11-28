@@ -11,7 +11,7 @@ xrdb -merge "$HOME/.Xresources" &
 sleep 1.0
 
 # 3. Start all background services 
-feh --bg-scale --scale-down --no-xinerama "$HOME/dotfiles/wallpapers/73.png" &
+feh --bg-scale --scale-down --no-xinerama "$HOME/dotfiles/wallpapers/nm.png" &
 "$HOME/dotfiles/suckless/slstatus/slstatus" &
 
 # --- APPLICATION LAUNCHES ---
