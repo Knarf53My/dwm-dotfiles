@@ -89,10 +89,10 @@ static const char *dmenucmd[] = {
 
 static const char *termcmd[]  = { "alacritty", NULL };
 
-/* volume commands */
-static const char *volupcmd[]   = { "pamixer", "--increase", "2", NULL };
-static const char *voldowncmd[] = { "pamixer", "--decrease", "2", NULL };
-static const char *volmutecmd[] = { "pamixer", "--toggle-mute", NULL };
+/* Volume control using PACTL (Robust & Explicit) */
+static const char *volupcmd[]   = { "pactl", "set-sink-volume", "@DEFAULT_SINK@", "+5%", NULL };
+static const char *voldowncmd[] = { "pactl", "set-sink-volume", "@DEFAULT_SINK@", "-5%", NULL };
+static const char *volmutecmd[] = { "pactl", "set-sink-mute", "@DEFAULT_SINK@", "toggle", NULL };
 
 /* brightness commands (kept for laptop use) */
 static const char *brightupcmd[]   = { "brightnessctl", "set", "+10%", NULL };
@@ -134,10 +134,17 @@ static const Key keys[] = {
 
 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
 
-	/* volume (F10/F11/F12 for desktop keyboard) */
-	{ 0,                            XK_F10,   spawn,           {.v = volmutecmd } },
-	{ 0,                            XK_F11,   spawn,           {.v = voldowncmd } },
-	{ 0,                            XK_F12,   spawn,           {.v = volupcmd } },
+        /* modifier, key, function, argument */
+
+        /* 1. DESKTOP F-KEYS (Existing) */
+        /* { 0, XK_F10, spawn, {.v = volmutecmd } }, */
+        /* { 0, XK_F11, spawn, {.v = voldowncmd } }, */
+        /* { 0, XK_F12, spawn, {.v = volupcmd } }, */
+
+        /* 2. LAPTOP MULTIMEDIA KEYS (New addition) */
+        { 0, XF86XK_AudioMute,      spawn, {.v = volmutecmd } },
+        { 0, XF86XK_AudioLowerVolume, spawn, {.v = voldowncmd } },
+        { 0, XF86XK_AudioRaiseVolume, spawn, {.v = volupcmd } },
 
 	/* brightness commands (kept for laptop use) */
 	{ MODKEY,                       XK_F5,    spawn,           {.v = brightdowncmd } },

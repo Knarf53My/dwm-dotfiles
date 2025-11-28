@@ -11,6 +11,9 @@ const unsigned int interval = 1000;
 /* text to show if no value can be retrieved */
 static const char unknown_str[] = "--";
 
+/* Volume command using PACTL (Outputs only the volume percentage number) */
+static const char *volperc_cmd[] = { "/bin/sh", "-c", "pactl list sinks | grep 'Volume:' | head -n1 | awk '{print $5}' | tr -d '%'", NULL };
+
 /* maximum output string length */
 #define MAXLEN 2048
 
@@ -72,8 +75,10 @@ static const char unknown_str[] = "--";
  */
 static const struct arg args[] = {
     /* function         format          argument */
+    { wifi_perc,        " WIFi %s%% | ", "wlp58s0" },
+    { disk_perc,        " SDD %s%% | ", "/" },  
     { cpu_perc,         " CPU %s%% | ", NULL },
     { ram_perc,         " RAM %s%% | ", NULL },
-    { run_command,      " VOL %s%% | ", "pamixer --get-volume" },
+    { run_command,      " VOL %s%% | ", "pactl list sinks | grep 'Volume:' | head -n1 | awk '{print $5}' | tr -d '%'" },
     { datetime,         " %s ",          "%Y-%m-%d %H:%M" },
 };
