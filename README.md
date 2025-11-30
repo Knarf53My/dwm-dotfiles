@@ -2,7 +2,7 @@
 
 Dotfiles to set up a full working DWM window manager environment.
 
-![Clean DWM Desktop Setup](assets/nm.png)
+![Clean DWM Desktop Setup](assets/dwm.png)
 
 Clean, minimal, fast — with dwm, slstatus, themes, scripts, aliases,
 and a complete bootstrap system.
