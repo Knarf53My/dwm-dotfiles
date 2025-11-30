@@ -16,4 +16,9 @@ set smarttab                  " Smart tabs
 
 " Optional: Use a simple native colorscheme if you want more than black/white
 " colorscheme desert
-" colorscheme Nord
+
+" --- FINAL SECTION: LOCAL OVERRIDE ---
+" Load personal, non-repo-tracked configuration if it exists.
+if filereadable(expand("~/.vimrc.local"))
+    source ~/.vimrc.local
+endif
