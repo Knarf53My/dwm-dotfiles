@@ -35,3 +35,9 @@ configs/.vim/undo/
 # Local user configurations
 .config/btop/
 .config/mc/
+
+# Local user-specific configuration directories and caches
+.config/dconf/
+.config/glow/
+.config/htop/
+.config/pulse/
