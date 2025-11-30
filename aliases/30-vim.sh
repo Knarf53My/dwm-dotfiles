@@ -6,5 +6,6 @@ alias vimrc='vim ~/.vimrc'
 # --- bash editing ---
 alias vb='vim ~/.bashrc'
 
-# --- markdown alias ---
+# --- markdown aliases ---
 alias bat='batcat'
+alias cat='bat --paging=never'

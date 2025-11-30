@@ -66,3 +66,21 @@ This setup follows the classic suckless workflow:
 -   everything portable in .dotfiles
 
 # Scripts used:
+
+In /dotfiles/scripts:
+
+    - freeze.sh                --- Saves a list of installed packages and configuration files
+    - install_custom_bashrc.sh --- Creates a colorful, Git-aware PS1 prompt configuration.
+    - install_fzf.sh           --- Installs the Fuzzy Finder utility and configures Bash history search.
+    - rebuild.sh               --- Script to recompile all Suckless tools (dwm, slstatus) at once.
+
+In /dotfiles:
+
+    - bootstrap.sh             --- Installs system dependencies, builds suckless, and deploys configuration.
+
+In /dotfiles/configs/.config/dwm:
+
+    - autostart.sh             --- Starts background processes (slstatus, feh) when the DWM session begins.
+    - dwm-sessions.sh          --- The main session file executed by LightDM.
+
+
