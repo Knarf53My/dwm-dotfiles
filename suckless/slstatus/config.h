@@ -75,6 +75,7 @@ static const char *volperc_cmd[] = { "/bin/sh", "-c", "pactl list sinks | grep '
  */
 static const struct arg args[] = {
     /* function         format          argument */
+    { battery_perc,     " BAT %s%% | ", "BAT0" },
     { wifi_perc,        " WIFi %s%% | ", "wlp58s0" },
     { disk_perc,        " SDD %s%% | ", "/" },  
     { cpu_perc,         " CPU %s%% | ", NULL },
